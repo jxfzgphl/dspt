@@ -48,13 +48,13 @@ exports.register=(req,res)=>{
 			if(results.affectedRows!==1){
 				return res.send({
 					status:1,
-					message:'注册账号失败'
+					message:'账号注册失败'
 				})
 			}
 			//插入成功
 			res.send({
 				status:1,
-				message:'注册账号成功'
+				message:'账号注册成功'
 			})
 		})
 	})
@@ -66,13 +66,13 @@ exports.login=(req,res)=>{
 	db.query(sql,loginfo.account,(err,results)=>{
 		//执行sql语句失败的情况，一般是数据库断开的情况
 		if(err) return res.cc(err)
-		if(results.length!==1) return res.cc('登入失败')
+		if(results.length!==1) return res.cc('登录失败')
 		//对前端传过来的数据进行解密
 		const compareResult = bcrypt.compareSync(loginfo.password,results[0].password)
 		if(!compareResult){
-			return res.cc('登入失败')
+			return res.cc('登录失败')
 		}
-		//对账号是否被冻结做判断
+		//对账号是否被冻结做判断,statu为1则被冻结
 		if(results[0].status==1){
 			return res.cc('账号被冻结')
 		}
@@ -91,7 +91,7 @@ exports.login=(req,res)=>{
 		res.send({
 			results:results[0],
 			status:0,
-			message:"登入成功",
+			message:"登录成功",
 			token:'Bearer '+tokenStr,
 		})
 	})
